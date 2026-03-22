@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from models import PatientCreate, PatientPublic, Appointments
+import asyncio
 
 patient_router = APIRouter()
 
@@ -20,7 +21,9 @@ async def get_patient(patient_id: int):
     for patient in patients:
         if patient["id"] == patient_id:
             return patient
-    return {"message": "Patient not found"}
+    raise HTTPException(status_code=404,
+                         detail="Patient not found"
+    )
 
 @patient_router.get("/appointments/{appointment_id}", response_model=Appointments)
 async def get_appointment(appointment_id: int):
@@ -28,7 +31,9 @@ async def get_appointment(appointment_id: int):
     for appointment in appointments:
         if appointment["id"] == appointment_id:
             return appointment
-    return {"message": "Appointment not found"}
+    raise HTTPException(status_code=404,
+                         detail="Appointment not found"
+    )
 
 @patient_router.post("/patients/")
 async def add_patient(patient: PatientCreate):
@@ -57,7 +62,9 @@ async def update_patient(patient_id: int, patient: PatientCreate):
             p["age"] = patient.age
             p["disease"] = patient.disease
             return {"message": "Patient updated successfully", "details": p}
-    return {"message": "Patient not found"}
+    raise HTTPException(status_code=404,
+                         detail="Patient not found"
+    )
 
 @patient_router.put("/appointments/{appointment_id}")
 async def update_appointment(appointment_id: int, appointment: Appointments):
@@ -67,7 +74,9 @@ async def update_appointment(appointment_id: int, appointment: Appointments):
             a["date"] = appointment.date
             a["time"] = appointment.time
             return {"message": "Appointment updated successfully", "details": a}
-    return {"message": "Appointment not found"}
+    raise HTTPException(status_code=404,
+                         detail="Appointment not found"
+    )
 
 @patient_router.delete("/patients/{patient_id}")
 async def delete_patient(patient_id: int):
@@ -75,7 +84,9 @@ async def delete_patient(patient_id: int):
         if p["id"] == patient_id:
             patients.remove(p)
             return {"message": "Patient deleted successfully", "details": p}
-    return {"message": "Patient not found"}
+    raise HTTPException(status_code=404,
+                         detail="Patient not found"
+    )
 
 @patient_router.delete("/appointments/{appointment_id}")
 async def delete_appointment(appointment_id: int):
@@ -83,4 +94,6 @@ async def delete_appointment(appointment_id: int):
         if a["id"] == appointment_id:
             appointments.remove(a)
             return {"message": "Appointment deleted successfully", "details": a}
-    return {"message": "Appointment not found"}
+    raise HTTPException(status_code=404,
+                         detail="Appointment not found"
+    )
