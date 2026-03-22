@@ -1,0 +1,135 @@
+<!-- TODO: This file must be named patient.html and placed inside mini-project-1/templates/ -->
+
+<!-- TODO: The extends tag must point to home.html — do not change this line -->
+{% extends "home.html" %}
+
+<!-- TODO: This block name must match the block name in home.html exactly.
+     For Clinic it is: patient_container
+     Change only if your domain is different:
+       Library    → book_container
+       Gym        → member_container
+       Enrollment → enrollment_container
+       Budget     → transaction_container               -->
+{% block patient_container %}
+
+<main class="container">
+    <hr>
+
+    <!-- ─── ADD FORM ──────────────────────────────────────────────────────────
+         TODO: This form submits a POST request to add a new item.
+               Update the aria-label, placeholder, and button text
+               to match your domain.
+               Example for Library: aria-label="Add a book"
+                                    placeholder="Enter book title"
+                                    button text → "Add Book"          -->
+    <section class="container-fluid mb-4">
+        <form method="post">
+            <div class="input-group">
+                <input
+                    class="form-control"
+                    type="text"
+                    name="item"
+                    aria-label="Add a patient"
+                    placeholder="Enter patient full name"
+                    value="{{ item }}"
+                />
+                <!-- TODO: Change button label to match your domain -->
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit">
+                        <!-- TODO: Change icon if desired. fa-user-plus suits Clinic.
+                             Other options: fa-book-medical, fa-dumbbell, fa-graduation-cap, fa-wallet -->
+                        <i class="fas fa-user-plus mr-1"></i> Add Patient
+                    </button>
+                </div>
+            </div>
+        </form>
+    </section>
+
+    <!-- ─── SINGLE ITEM VIEW ─────────────────────────────────────────────────
+         This block renders when a single item is passed from the router.
+         TODO: Update the variable name and field names to match your domain.
+
+         For Clinic   → patient.id, patient.name, patient.age, patient.ward
+         For Library  → book.id, book.title, book.author, book.pages
+         For Gym      → member.id, member.name, member.membership_type
+         For Enrollment → enrollment.id, enrollment.student_name, enrollment.course
+         For Budget   → transaction.id, transaction.description, transaction.amount  -->
+
+    {% if patient %}
+    <article class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            <!-- TODO: Change "Patient" to your entity name -->
+            <h4 class="mb-0"><i class="fas fa-id-card mr-2"></i>Patient Details</h4>
+        </div>
+        <div class="card-body">
+            <!-- TODO: Replace field names below with your domain's fields.
+                 Each row follows this pattern:
+                 <strong>Label:</strong> {{ variable.field }}              -->
+            <p><strong>ID:</strong> {{ patient.id }}</p>
+            <p><strong>Name:</strong> {{ patient.name }}</p>
+            <p><strong>Age:</strong> {{ patient.age }}</p>
+            <p><strong>Ward:</strong> {{ patient.ward }}</p>
+
+            <!-- TODO: If your entity has nested items (e.g. appointments,
+                 borrow records, sessions), display them here.
+                 Remove this block if not applicable.                       -->
+            <p><strong>Appointments:</strong> {{ patient.appointments | length }} on record</p>
+
+            <a href="/home" class="btn btn-outline-secondary btn-sm mt-2">
+                <i class="fas fa-arrow-left mr-1"></i> Back to list
+            </a>
+        </div>
+    </article>
+
+    {% else %}
+
+    <!-- ─── LIST VIEW ────────────────────────────────────────────────────────
+         This block renders when the full list is passed from the router.
+         TODO: Update the heading and list items to match your domain.
+
+         The loop variable name must match what you pass from your router:
+           Clinic     → for patient in patients
+           Library    → for book in books
+           Gym        → for member in members
+           Enrollment → for enrollment in enrollments
+           Budget     → for transaction in transactions
+
+         The link href must match your router's HTML route:
+           Clinic     → /patient/{{ patient.id }}
+           Library    → /book/{{ book.id }}
+           Gym        → /member/{{ member.id }}
+           Enrollment → /enrollment/{{ enrollment.id }}
+           Budget     → /transaction/{{ transaction.id }}              -->
+
+    <section class="container-fluid">
+        <!-- TODO: Change heading to match your domain -->
+        <h2 class="text-center mb-3">
+            <i class="fas fa-list mr-2"></i>All Patients
+        </h2>
+        <div class="card shadow-sm">
+            <ul class="list-group list-group-flush">
+                {% for patient in patients %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>
+                        <span class="badge badge-primary badge-pill mr-2">{{ loop.index }}</span>
+                        <!-- TODO: Update the link href and display field for your domain -->
+                        <a href="/patient/{{ patient.id }}">{{ patient.name }}</a>
+                    </span>
+                    <!-- TODO: Change the secondary info field to suit your domain.
+                         Clinic → patient.ward
+                         Library → book.author
+                         Gym → member.membership_type
+                         Enrollment → enrollment.course
+                         Budget → transaction.amount                        -->
+                    <span class="text-muted small">{{ patient.ward }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+    </section>
+
+</main>
+
+<!-- TODO: Do NOT remove this endblock tag -->
+{% endblock %}

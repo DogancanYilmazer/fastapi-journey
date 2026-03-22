@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <!-- TODO: Change the title to match your system name -->
+    <title>Clinic Management System</title>
+
+    <!-- Bootstrap 4 — you may upgrade to Bootstrap 5 if you prefer -->
+    <link crossorigin="anonymous"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+          integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4"
+          rel="stylesheet">
+    <link crossorigin="anonymous"
+          href="https://use.fontawesome.com/releases/v5.0.10/css/all.css"
+          integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg"
+          rel="stylesheet">
+
+    <style>
+        /* TODO: Customise the navbar colour to suit your domain.
+           Options: bg-primary (blue), bg-success (green), bg-danger (red),
+                    bg-warning (yellow), bg-dark (black), bg-info (teal)       */
+        .app-navbar {
+            background-color: #1a6fc4;
+            padding: 1rem 0;
+        }
+
+        /* TODO: Change the icon and heading text below to match your domain */
+        .app-navbar h1 {
+            color: #ffffff;
+            font-size: 1.8rem;
+            margin: 0;
+        }
+
+        body {
+            background-color: #f4f6f9;
+        }
+
+        footer {
+            margin-top: 3rem;
+            padding: 1rem 0;
+            background-color: #e9ecef;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <!-- TODO: Change the icon emoji and system name to match your domain
+         Examples:
+           Clinic       → 🏥 Clinic Management System
+           Library      → 📚 Library Management System
+           Gym          → 🏋️ Gym Management System
+           Enrollment   → 🎓 Course Enrollment System
+           Budget       → 💰 Budget Tracker                 -->
+    <nav class="app-navbar">
+        <div class="container">
+            <h1 class="text-center">🏥 Clinic Management System</h1>
+        </div>
+    </nav>
+</header>
+
+<div class="container mt-4">
+    <!-- TODO: Do NOT remove or rename this block.
+         The block name must stay as {domain}_container to match your item template.
+         For Clinic keep it: patient_container
+         Change it only if your domain is different:
+           Library    → book_container
+           Gym        → member_container
+           Enrollment → enrollment_container
+           Budget     → transaction_container                -->
+    {% block patient_container %}{% endblock %}
+</div>
+
+<!-- TODO: Update the footer text with your name and student ID -->
+<footer>
+    <p>SFWE477 &mdash; Final International University &mdash; Your Name | Student ID</p>
+</footer>
+
+</body>
+</html>

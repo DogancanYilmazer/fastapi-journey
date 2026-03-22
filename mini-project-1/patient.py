@@ -1,6 +1,10 @@
-from fastapi import APIRouter, HTTPException
-from models import PatientCreate, PatientPublic, Appointments
+from fastapi import APIRouter, HTTPException, Request
+from models import PatientPublic, PatientCreate, Appointments
 import asyncio
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+
+templates = Jinja2Templates(directory="templates")
 
 patient_router = APIRouter()
 
@@ -16,13 +20,14 @@ appointments = [
     {"id": 3, "name": "Paul Reyes", "date": "03-03-2026", "time": "12:00 PM"}
 ]
 
+
 @patient_router.get("/patients/{patient_id}", response_model=PatientPublic)
 async def get_patient(patient_id: int):
     for patient in patients:
         if patient["id"] == patient_id:
             return patient
     raise HTTPException(status_code=404,
-                         detail="Patient not found"
+                        detail="Patient not found"
     )
 
 @patient_router.get("/appointments/{appointment_id}", response_model=Appointments)
@@ -32,7 +37,7 @@ async def get_appointment(appointment_id: int):
         if appointment["id"] == appointment_id:
             return appointment
     raise HTTPException(status_code=404,
-                         detail="Appointment not found"
+                        detail="Appointment not found"
     )
 
 @patient_router.post("/patients/")
@@ -63,7 +68,7 @@ async def update_patient(patient_id: int, patient: PatientCreate):
             p["disease"] = patient.disease
             return {"message": "Patient updated successfully", "details": p}
     raise HTTPException(status_code=404,
-                         detail="Patient not found"
+                        detail="Patient not found"
     )
 
 @patient_router.put("/appointments/{appointment_id}")
@@ -75,7 +80,7 @@ async def update_appointment(appointment_id: int, appointment: Appointments):
             a["time"] = appointment.time
             return {"message": "Appointment updated successfully", "details": a}
     raise HTTPException(status_code=404,
-                         detail="Appointment not found"
+                        detail="Appointment not found"
     )
 
 @patient_router.delete("/patients/{patient_id}")
@@ -85,7 +90,7 @@ async def delete_patient(patient_id: int):
             patients.remove(p)
             return {"message": "Patient deleted successfully", "details": p}
     raise HTTPException(status_code=404,
-                         detail="Patient not found"
+                        detail="Patient not found"
     )
 
 @patient_router.delete("/appointments/{appointment_id}")
@@ -95,5 +100,28 @@ async def delete_appointment(appointment_id: int):
             appointments.remove(a)
             return {"message": "Appointment deleted successfully", "details": a}
     raise HTTPException(status_code=404,
-                         detail="Appointment not found"
+                        detail="Appointment not found"
     )
+
+
+
+@patient_router.get("/home", response_class=HTMLResponse)
+async def home(request: Request):
+    return templates.TemplateResponse("home.html", {
+        "request": request,
+        "items": patients
+    })
+
+
+@patient_router.get("/home/{id}", response_class=HTMLResponse)
+async def get_item_page(request: Request, id: int):
+    for item in patients:
+        if item["id"] == id:
+            return templates.TemplateResponse("patient.html", {
+                "request": request,
+                "item": item
+            })
+    raise HTTPException(status_code=404,
+                         detail="Item not found"
+    )
+
