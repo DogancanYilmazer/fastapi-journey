@@ -1,21 +1,9 @@
-### Why did you choose each Pydantic field type?
-id: int – IDs must be numeric value.
-name: str – Names are text values.
-age: int – Age is a numeric value.
-disease: str – Disease name is text.
-date: str – Stored as text in DD-MM-YYYY format.
-time: str – Stored as text in HH:MM AM/PM format.
-Field(gt, ge, lt) – Used to add validation rules like limits for age and length for text fields.
+1. What is `@contextmanager` and why do we use it instead of a plain function here?
+No need to write db.close(), the connection is always closed, so no connection leak occurs.
 
-### What does each validation rule protect against?
-ge=1 for id - Prevents IDs from being zero or negative.
+2. What does `check_same_thread=False` do and why is it necessary in a FastAPI application?
+If two users try to access SQLite at the same time, only one user is allowed, and the other will get an error.
 
-gt=0, lt=100 for age - Ensures age is a positive and real human age.
+3. What happens to your data when the server restarts — with the old list vs. with SQLite?
+Changes in a dictionary are stored in RAM, so if the server shuts down, the changes are lost. With SQLite, changes are always permanent.
 
-min_length=3, max_length=50 for name and disease name - Prevents empty names and extremely long strings that could cause database or UI issues.
-
-Model_validator for appointments - This validation checks the format of the date and time fields.
-
-### Which endpoint uses async in a meaningful way, and why?
-GET /appointments/{appointment_id} uses async in a meaningful way because it includes `await asyncio.sleep(1)` to simulate wait.
-During this wait, the event loop can process other requests. Endpoint behaves without blocking.
