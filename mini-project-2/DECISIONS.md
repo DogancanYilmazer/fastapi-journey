@@ -1,33 +1,17 @@
-### 1. What is an ODM and why do we use Beanie instead of writing raw MongoDB queries?
+### 1. Why does `DATABASE_URL` use `mongo` as the hostname instead of `localhost`? What would happen if you kept `localhost`?
 
-An ODM (Object Document Mapper) is a layer that acts as a bridge between Python code and document-based databases like MongoDB. It allows developers to interact with the database using Python objects and classes instead of writing raw queries.
+Because FastAPI and MongoDB run in separate containers, `localhost` refers to the FastAPI container, not MongoDB. Using the `mongo` hostname ensures that FastAPI connects to the MongoDB container correctly.
 
-With Beanie, you work with models like Event and User instead of writing raw MongoDB queries.
+### 2. What does `depends_on` in `docker-compose.yml` do? Does it guarantee MongoDB is fully ready before FastAPI starts — and if not, what would?
 
-With Beanie:
-event = Event(title="Workshop", description="FastAPI basics")
-await event.insert()
+The `depends_on` only controls the startup order in the `docker-compose.yml` file. This directive starts MongoDB before FastAPI.
 
-Without ODM (raw MongoDB):
-await db.events.insert_one({"title": "Workshop", "description": "FastAPI basics"})
+To ensure MongoDB is ready, implement a health check on MongoDB and bind FastAPI to `service_healthy`, or add a retry/wait script to the FastAPI container.
 
-### 2. What is the role of the `Database` class — why wrap Beanie methods inside it instead of calling them directly in routes?
+### 3. What is the purpose of the volume in the `mongo` service? What happens to your data if you remove it and run `docker compose down`?
 
-The Database class is a service layer that keeps all data-access logic in one place.
-This keeps routes focused on request/response handling, avoids repeated query code, and makes testing easier.
-Example: instead of writing "await Event.find_one(Event.id == event_id)" in many routes, routes call "await db.get_event(event_id)".
+The volume keeps MongoDB data persistent outside the container. If you remove it and run `docker compose down`, the data is lost.
 
+### 4. Why do we copy `requirements.txt` and run `pip install` before copying the rest of the app code in the Dockerfile?
 
-### 3. What happens if `initialize_database()` is not called on startup? What would break and why?
-
-If initialize_database() is not called on startup, Beanie is never initialized with the MongoDB connection and document models.
-The app may still start, but database-dependent endpoints (signup/signin/event CRUD) will fail at runtime.
-
-### 4. What is the difference between the `Event` document and the `EventUpdate` model, and why are they two separate classes?
-
-Event is the main Beanie Document model stored in MongoDB. It represents a full event record.
-
-EventUpdate is a request model for update operations. Its fields are optional, so you can change only the fields sent by the client.
-
-Event enforces the structure of saved data.
-EventUpdate supports partial updates without forcing all fields every time.
+Allows Docker to utilize the build cache. If only the app code changes, Docker will reuse the cached dependencies.
