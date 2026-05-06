@@ -60,6 +60,7 @@ async def vote_rest(poll_id: str, data: Vote):
         raise HTTPException(status_code=400, detail="Invalid option")
 
     poll["votes"][data.option] += 1
+    await broadcast(poll_id)
     return poll
 
 
@@ -88,3 +89,33 @@ def get_poll_or_404(poll_id: str):
         raise HTTPException(status_code=404, detail="Poll not found")
     return poll
 
+
+async def broadcast(poll_id: str):
+    message = {"type": "poll_updated", "poll": polls[poll_id]}
+    for ws in connections.get(poll_id, [])[:]:
+        try:
+            await ws.send_json(message)
+        except Exception:
+            connections[poll_id].remove(ws)
+
+
+@app.websocket("/ws/polls/{poll_id}")
+async def poll_socket(ws: WebSocket, poll_id: str):
+    if poll_id not in polls:
+        await ws.close()
+        return
+
+    await ws.accept()
+    connections.setdefault(poll_id, []).append(ws)
+    await ws.send_json({"type": "connected", "poll": polls[poll_id]})
+
+    try:
+        while True:
+            data = await ws.receive_json()
+            if data.get("type") == "vote":
+                option = data.get("option")
+                if option in polls[poll_id]["votes"]:
+                    polls[poll_id]["votes"][option] += 1
+                    await broadcast(poll_id)
+    except WebSocketDisconnect:
+        connections[poll_id].remove(ws)

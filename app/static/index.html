@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Realtime Polls</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <main class="container">
+    <section class="card">
+      <h1>Realtime Polls</h1>
+      <p>Open two tabs and vote: results update instantly in the other tab as well.</p>
+
+      <form id="create-form">
+        <input id="question" placeholder="Question" required minlength="3" />
+        <label>Options:</label>
+        <div id="options-container"></div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <button type="button" id="add-option-btn">Add Option</button>
+          <button type="submit">Create Poll</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="grid">
+      <div class="card">
+        <h2>Poll List</h2>
+        <div id="poll-list"></div>
+      </div>
+
+      <div class="card">
+        <h2>Active Poll</h2>
+        <div id="active-poll">Select a poll.</div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
